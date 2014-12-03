@@ -130,37 +130,45 @@ class Apns extends BaseAdapter
     {
         $badge = ($message->hasOption('badge'))
             ? (int) ($message->getOption('badge') + $device->getParameter('badge', 0))
-            : 0
+            : null
         ;
 
         $sound = $message->getOption('sound', 'bingbong.aiff');
-
-        $alert = new ServiceAlert(
-            $message->getText(),
-            $message->getOption('actionLocKey'),
-            $message->getOption('locKey'),
-            $message->getOption('locArgs'),
-            $message->getOption('launchImage')
-        );
-        if ($actionLocKey = $message->getOption('actionLocKey')) {
-            $alert->setActionLocKey($actionLocKey);
-        }
-        if ($locKey = $message->getOption('locKey')) {
-            $alert->setLocKey($locKey);
-        }
-        if ($locArgs = $message->getOption('locArgs')) {
-            $alert->setLocArgs($locArgs);
-        }
-        if ($launchImage = $message->getOption('launchImage')) {
-            $alert->setLaunchImage($launchImage);
+        $text = $message->getText();
+        if (!empty($text)) {
+            $alert = new ServiceAlert(
+                $message->getText(),
+                $message->getOption('actionLocKey'),
+                $message->getOption('locKey'),
+                $message->getOption('locArgs'),
+                $message->getOption('launchImage')
+            );
+            if ($actionLocKey = $message->getOption('actionLocKey')) {
+                $alert->setActionLocKey($actionLocKey);
+            }
+            if ($locKey = $message->getOption('locKey')) {
+                $alert->setLocKey($locKey);
+            }
+            if ($locArgs = $message->getOption('locArgs')) {
+                $alert->setLocArgs($locArgs);
+            }
+            if ($launchImage = $message->getOption('launchImage')) {
+                $alert->setLaunchImage($launchImage);
+            }
         }
 
         $serviceMessage = new ServiceMessage();
         $serviceMessage->setId(sha1($device->getToken().$message->getText()));
-        $serviceMessage->setAlert($alert);
+        if (isset($alert)) {
+            $serviceMessage->setAlert($alert);
+        }
         $serviceMessage->setToken($device->getToken());
         $serviceMessage->setBadge($badge);
         $serviceMessage->setCustom($message->getOption('custom', array()));
+
+        if (null != $message->getOption('content-available')) {
+            $serviceMessage->setContentAvailable($message->getOption('content-available'));
+        }
 
         if (null !== $sound) {
             $serviceMessage->setSound($sound);
