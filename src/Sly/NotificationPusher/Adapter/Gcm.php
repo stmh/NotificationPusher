@@ -70,6 +70,7 @@ class Gcm extends BaseAdapter
             if ((bool) $this->response->getSuccessCount()) {
                 foreach ($tokensRange as $token) {
                     $pushedDevices->add($push->getDevices()->get($token));
+                    $this->log($push->getMessage(), $push->getDevices()->get($token), 0);
                 }
             }
         }
