@@ -67,6 +67,10 @@ class Gcm extends BaseAdapter
                 throw new PushException($e->getMessage());
             }
 
+            foreach ($tokensRange as $token) {
+                $this->log($push->getMessage(), $push->getDevices()->get($token), $this->response);
+            }
+
             if ((bool) $this->response->getSuccessCount()) {
                 foreach ($tokensRange as $token) {
                     $pushedDevices->add($push->getDevices()->get($token));
