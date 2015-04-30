@@ -39,6 +39,11 @@ abstract class BaseAdapter extends BaseParameteredModel implements AdapterInterf
     protected $response;
 
     /**
+     * @var  mixed
+     */
+    protected $logger;
+
+    /**
      * Constructor.
      *
      * @param array $parameters Adapter specific parameters
@@ -127,4 +132,32 @@ abstract class BaseAdapter extends BaseParameteredModel implements AdapterInterf
     {
         return (PushManager::ENVIRONMENT_PROD === $this->getEnvironment());
     }
+
+    /**
+     * getLogger.
+     *
+     * @return mixed.
+     */
+    public function getLogger() {
+        return $this->logger;
+    }
+
+    /**
+     * setFailureCallback.
+     *
+     * @param string mixed.
+     */
+    public function setLogger($logger) {
+        $this->logger = $logger;
+    }
+
+    /**
+     * handle failure, will call $callback if set.
+     */
+    protected function log($message, $device, $response) {
+        if ($this->logger) {
+            $this->logger->log($message, $device, $response);
+        }
+    }
+
 }

@@ -71,6 +71,8 @@ class Apns extends BaseAdapter
                 throw new PushException($e->getMessage());
             }
 
+            $this->log($push->getMessage(), $device, $this->response);
+
             if (ServiceResponse::RESULT_OK === $this->response->getCode()) {
                 $pushedDevices->add($device);
             }
